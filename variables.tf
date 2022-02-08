@@ -25,9 +25,12 @@ desciption="AWS private subnet cidr"
 variable "availability_zone_a" {
   type    = string
   default = "us-east-1a"
+  description = "availability zone for subnet"
 }
 
 variable "availability_zone_b" {
   type    = string
   default = "us-east-1b"
+  description = "availability zone for subnet"
+
 }
