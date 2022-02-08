@@ -4,6 +4,12 @@ variable "environment" {
     default = "dev"
 }
 
+variable "owner" {
+  type=string
+  description="the owner of resources created"
+  default="resource_owner_buddy" 
+}
+
 
 variable "network_cidr" {
 type=string
