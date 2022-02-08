@@ -11,3 +11,6 @@ output "private_subnet_id" {
   value = aws_subnet.private_subnet.id
 }
 
+output "igw_tags" {
+  value=aws_internet_gateway.myIGW.tags_all
+}
