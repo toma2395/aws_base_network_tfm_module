@@ -43,7 +43,6 @@ resource "aws_subnet" "private_subnet" {
 }
 
 
-
 resource "aws_internet_gateway" "myIGW" {
   vpc_id = aws_vpc.core_vpc.id
   tags = {
