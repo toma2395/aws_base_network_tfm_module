@@ -7,18 +7,18 @@ variable "environemnt" {
 
 variable "network_cidr" {
 type=string
-desciption="AWS network cidr"
+description="AWS network cidr"
 }
 
 
 variable "public_subnet_cidr" {
 type=string
-desciption="AWS public subnet cidr"
+description="AWS public subnet cidr"
 }
 
 variable "private_subnet_cidr" {
 type=string
-desciption="AWS private subnet cidr"
+description="AWS private subnet cidr"
 }
 
 
