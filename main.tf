@@ -9,7 +9,7 @@ terraform {
 locals {
       tags = {
     Terraform   = "true"
-    Environment = "${var.environemnt}"
+    Environment = "${var.environment}"
     Owner       = "tduniec"
   }
 }

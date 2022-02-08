@@ -1,4 +1,4 @@
-variable "environemnt" {
+variable "environment" {
     type = string
     description = "the environment type which will be tagged the resource e.g. dev. uat, stagging, prod"
     default = "dev"
