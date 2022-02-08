@@ -63,3 +63,10 @@ resource "aws_route_table_association" "route_table_association" {
   route_table_id = aws_route_table.table.id
 }
 
+
+resource "random_string" "rstring" {
+  length  = 18
+  special = false
+  upper   = false
+}
+
