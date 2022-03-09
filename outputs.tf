@@ -12,9 +12,9 @@ output "private_subnet_id" {
 }
 
 output "igw_tags" {
-  value= aws_internet_gateway.myIGW.tags_all
+  value = aws_internet_gateway.myIGW.tags_all
 }
 
 output "rstring" {
-  value=random_string.rstring.result
+  value = random_string.rstring.result
 }
