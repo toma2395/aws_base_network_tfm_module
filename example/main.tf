@@ -16,5 +16,5 @@ module "network" {
   owner                            = var.owner
   project_name                     = "MySampleProject"
   create_nat_gateway               = true
-  multi_subnet_nat_gateway_for_vpc = true
+  multi_subnet_nat_gateway_for_vpc = false
 }
