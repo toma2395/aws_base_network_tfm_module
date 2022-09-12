@@ -22,11 +22,11 @@ variable "cidr_range" {
 }
 
 variable "create_nat_gateway" {
-  default = "false"
+  default     = "false"
   description = "if true then create nat gateway for private subnets"
 }
 
 variable "multi_subnet_nat_gateway_for_vpc" {
-  default = false
+  default     = false
   description = "if false then is only one NAT gateway for each subnets, if true the each prvate subnets has allocated NAT Gateway for itself"
 }

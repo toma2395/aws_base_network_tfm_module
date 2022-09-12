@@ -12,9 +12,9 @@ module "network" {
   source = "../" # local path
 
   environment                      = "production"
-  cidr_range                       = "172.16.0.0/16"
+  cidr_range                       = "172.30.0.0/16"
   owner                            = var.owner
   project_name                     = "MySampleProject"
   create_nat_gateway               = true
-  multi_subnet_nat_gateway_for_vpc = false
+  multi_subnet_nat_gateway_for_vpc = true
 }
