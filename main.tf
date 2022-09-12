@@ -1,11 +1,12 @@
-
-
 locals {
-  tags = {
+
+  project_name_tag = var.project_name != ""? ({"Project" = "${var.project_name}"}) : {}
+
+  tags = merge({
     Terraform   = "true"
     Environment = "${var.environment}"
     Owner       = "${var.owner}"
-  }
+  }, local.project_name_tag)
 }
 
 
@@ -21,9 +22,9 @@ resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.core_vpc.id
   map_public_ip_on_launch = true
   availability_zone       = var.availability_zone_a
-  tags = {
-    "name" = "public"
-  }
+  tags = merge(local.tags, {
+    "name" = "public-subnet"
+  })
 }
 
 resource "aws_subnet" "private_subnet" {
@@ -31,17 +32,17 @@ resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.core_vpc.id
   availability_zone = var.availability_zone_b
 
-  tags = {
-    "name" = "private"
-  }
+  tags = merge(local.tags, {
+    "name" = "private-subnet"
+  })
 }
 
 
 resource "aws_internet_gateway" "myIGW" {
   vpc_id = aws_vpc.core_vpc.id
-  tags = {
+  tags = merge(local.tags,{
     "name" = "default_vpc_IGW"
-  }
+  })
 }
 resource "aws_route_table" "table" {
   vpc_id = aws_vpc.core_vpc.id
@@ -49,6 +50,7 @@ resource "aws_route_table" "table" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.myIGW.id
   }
+  tags = merge(local.tags,{})
 
 }
 

@@ -10,6 +10,11 @@ variable "owner" {
   default     = "resource_owner_buddy"
 }
 
+variable "project_name" {
+  default = ""
+  type = string
+  description = "Project name used"
+}
 
 variable "network_cidr" {
   type        = string
