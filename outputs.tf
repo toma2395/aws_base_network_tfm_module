@@ -3,18 +3,22 @@ output "core_vpc_id" {
 }
 
 
-output "public_subnet_id" {
-  value = aws_subnet.public_subnet.id
+output "private_subnets_ips" {
+  description = "The IPs for the private subnets"
+  value       = local.private_cidr_ranges
 }
 
-output "private_subnet_id" {
-  value = aws_subnet.private_subnet.id
+output "private_subnets_id" {
+  description = "Identifiers fo private subnets"
+  value       = { for k, v in aws_subnet.private_subnet : k => v.id }
 }
 
-output "igw_tags" {
-  value = aws_internet_gateway.myIGW.tags_all
+output "public_subnets_ips" {
+  description = "The IPs for the private subnets"
+  value       = local.public_cidr_ranges
 }
 
-output "rstring" {
-  value = random_string.rstring.result
+output "public_subnets_id" {
+  description = "Identifiers fo public subnets"
+  value       = { for k, v in aws_subnet.public_subnet : k => v.id }
 }
