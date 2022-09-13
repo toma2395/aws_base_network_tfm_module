@@ -75,7 +75,7 @@ resource "aws_internet_gateway" "my_igw" {
 resource "aws_route_table" "public_table" {
   vpc_id = aws_vpc.core_vpc.id
 
-  tags = merge(local.tags, {Name = "core-vpc-public-route-table"})
+  tags = merge(local.tags, { Name = "core-vpc-public-route-table" })
 
 }
 
@@ -104,10 +104,14 @@ resource "aws_nat_gateway" "many_private_nat_gateways" {
   ]
 }
 
-
+resource "aws_eip" "nat_eip" {
+  count = local.enable_nat_gateway && !var.multi_subnet_nat_gateway_for_vpc ? 1 : 0
+  vpc   = true
+}
 
 resource "aws_nat_gateway" "one_private_nat_gateway" {
   count             = local.enable_nat_gateway && !var.multi_subnet_nat_gateway_for_vpc ? 1 : 0
+  allocation_id     = aws_eip.nat_eip[0].id
   subnet_id         = aws_subnet.public_subnet[local.public_cidr_ranges[local.default_private_subnet_index]].id
   connectivity_type = "private"
 
@@ -125,7 +129,7 @@ resource "aws_route_table" "private_table" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.one_private_nat_gateway[count.index].id
   }
-  tags = merge(local.tags, {Name = "core-vpc-private-route-table"})
+  tags = merge(local.tags, { Name = "core-vpc-private-route-table" })
 
 }
 
