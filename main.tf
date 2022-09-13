@@ -58,7 +58,7 @@ resource "aws_subnet" "public_subnet" {
 
 
 resource "aws_internet_gateway" "my_igw" {
-  count = var.create_internet_gateway ? 1 : 0
+  count  = var.create_internet_gateway ? 1 : 0
   vpc_id = aws_vpc.core_vpc.id
   tags = merge(local.tags, {
     "name" = "default_vpc_IGW"
@@ -72,10 +72,10 @@ resource "aws_route_table" "public_table" {
 }
 
 resource "aws_route" "internet_gw_route" {
-  count = var.create_internet_gateway ? 1 : 0
-  route_table_id = aws_route_table.public_table.id
+  count                  = var.create_internet_gateway ? 1 : 0
+  route_table_id         = aws_route_table.public_table.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.my_igw[0].id
+  gateway_id             = aws_internet_gateway.my_igw[0].id
 
 }
 
@@ -149,4 +149,81 @@ resource "aws_route_table_association" "multi_private_route_table_association" {
   depends_on = [
     aws_route_table.private_tables
   ]
+}
+
+#VPC flow logs
+
+resource "aws_flow_log" "vpc_flow_logs_enabled" {
+  count                = var.enable_vpc_flow_logs ? 1 : 0
+  iam_role_arn         = aws_iam_role.iam_role_to_enable_logs_delivery[0].arn
+  log_destination      = var.log_delivery_type != "s3" ? aws_cloudwatch_log_group.log_group_for_vpc_logs[0].arn : aws_s3_bucket.flow_logs_delivery_bucket[0].arn
+  log_destination_type = var.log_delivery_type
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.core_vpc.id
+  tags                 = merge(local.tags, {})
+
+}
+
+resource "aws_cloudwatch_log_group" "log_group_for_vpc_logs" {
+  count = var.enable_vpc_flow_logs && var.log_delivery_type != "s3" ? 1 : 0
+  name  = "vpc-flow-logs-${aws_vpc.core_vpc.id}-${var.environment}"
+  tags  = merge(local.tags, {})
+
+}
+
+resource "aws_iam_role" "iam_role_to_enable_logs_delivery" {
+  count = var.enable_vpc_flow_logs ? 1 : 0
+  name  = "iam-role-to-enable-vpc-logs-delivery"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "vpc-flow-logs.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "iam_policy_to_deliver_logs_to_cloud_watch" {
+  count = var.enable_vpc_flow_logs && var.log_delivery_type != "s3" ? 1 : 0
+  name  = "iam-policy-to-enable-vpc-logs-delivery"
+  role  = aws_iam_role.iam_role_to_enable_logs_delivery[0].id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+# delivery type to s3 bucket
+
+resource "aws_s3_bucket" "flow_logs_delivery_bucket" {
+  count         = var.enable_vpc_flow_logs && var.log_delivery_type == "s3" ? 1 : 0
+  bucket        = "flow-logs-delivery-bucket-${aws_vpc.core_vpc.id}-${var.environment}"
+  tags          = merge(local.tags, { "Name" = "VPC Flow Logs delivery bucket" })
+  force_destroy = true
+
+
 }

@@ -35,3 +35,14 @@ variable "multi_subnet_nat_gateway_for_vpc" {
   default     = false
   description = "if false then is only one NAT gateway for each subnets, if true the each prvate subnets has allocated NAT Gateway for itself"
 }
+
+variable "enable_vpc_flow_logs" {
+  default     = false
+  description = "if true enables vpc flow logs to generate and deliver"
+
+}
+
+variable "log_delivery_type" {
+  default     = "cloud-watch-logs"
+  description = "type of VPC flow logs delivery type"
+}
