@@ -95,7 +95,7 @@ resource "aws_route_table_association" "route_table_association" {
 
 
 resource "aws_nat_gateway" "many_private_nat_gateways" {
-  for_each          = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? aws_subnet.private_subnet : {}
+  for_each          = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? aws_subnet.public_subnet : {}
   subnet_id         = each.value.id
   connectivity_type = "private"
 
@@ -108,7 +108,7 @@ resource "aws_nat_gateway" "many_private_nat_gateways" {
 
 resource "aws_nat_gateway" "one_private_nat_gateway" {
   count             = local.enable_nat_gateway && !var.multi_subnet_nat_gateway_for_vpc ? 1 : 0
-  subnet_id         = aws_subnet.private_subnet[local.private_cidr_ranges[local.default_private_subnet_index]].id
+  subnet_id         = aws_subnet.public_subnet[local.public_cidr_ranges[local.default_private_subnet_index]].id
   connectivity_type = "private"
 
   depends_on = [
