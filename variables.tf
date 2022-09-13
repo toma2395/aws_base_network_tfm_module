@@ -1,7 +1,7 @@
 variable "aws_region" {
   default     = "us-east-1"
   description = "aws region for vpc deployment"
-
+  type        = string
 }
 
 variable "environment" {
@@ -14,6 +14,12 @@ variable "owner" {
   type        = string
   description = "the owner of resources created"
   default     = "resource_owner_buddy"
+}
+
+variable "enable_dns_hostnames" {
+  type        = bool
+  description = "Enables dns hostnames"
+  default     = false
 }
 
 variable "project_name" {

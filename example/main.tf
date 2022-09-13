@@ -18,4 +18,5 @@ module "network" {
   create_nat_gateway               = true
   multi_subnet_nat_gateway_for_vpc = false
   enable_vpc_flow_logs             = true
+  enable_dns_hostnames             = false
 }

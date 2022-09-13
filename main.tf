@@ -31,7 +31,8 @@ locals {
 
 
 resource "aws_vpc" "core_vpc" {
-  cidr_block = var.cidr_range
+  cidr_block           = var.cidr_range
+  enable_dns_hostnames = var.enable_dns_hostnames
 
   tags = local.tags
 
