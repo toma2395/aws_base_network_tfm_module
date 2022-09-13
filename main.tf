@@ -75,7 +75,7 @@ resource "aws_internet_gateway" "my_igw" {
 resource "aws_route_table" "public_table" {
   vpc_id = aws_vpc.core_vpc.id
 
-  tags = merge(local.tags, {})
+  tags = merge(local.tags, {Name = "core-vpc-public-route-table"})
 
 }
 
@@ -125,7 +125,7 @@ resource "aws_route_table" "private_table" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.one_private_nat_gateway[count.index].id
   }
-  tags = merge(local.tags, {})
+  tags = merge(local.tags, {Name = "core-vpc-private-route-table"})
 
 }
 
