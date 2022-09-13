@@ -60,7 +60,7 @@ No Modules.
 | owner | the owner of resources created | `string` |  | no |
 | project_name | Project name used | `string` |  | no |
 | create_nat_gateway | Project name used | `boolean` |  `false` | no |
-| create_internet_gateway | Project name used | `boolean`` |  `false` | no |
+| create_internet_gateway | Project name used | `boolean` |  `false` | no |
 | multi_subnet_nat_gateway_for_vpc | Project name used | `boolean`|  `false` | no |
 | enable_vpc_flow_logs | Project name used | `boolean` | `false` | no |
 | log_delivery_type | type of VPC flow logs delivery type -> one of ["cloud-watch-logs", "s3"]| `string` | `cloud-watch-logs` | no |
