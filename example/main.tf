@@ -1,11 +1,21 @@
+provider "aws" {
+  region = local.region
+}
+
+locals {
+  region = "us-east-1"
+}
+
+
 module "network" {
-  source = "git@github.com:toma2395/aws_base_network_tfm_module.git//?ref=v0.2.0"
-  # source="../" # local path
+  # source = "git@github.com:toma2395/aws_base_network_tfm_module.git//?ref=v0.2.0"
+  source = "../" # local path
 
-  environment         = "production"
-  network_cidr        = "172.16.0.0/16"
-  public_subnet_cidr  = "172.16.1.0/24"
-  private_subnet_cidr = "172.16.2.0/24"
-  owner               = var.owner
-
+  environment                      = "production"
+  cidr_range                       = "172.30.0.0/16"
+  owner                            = var.owner
+  project_name                     = "MySampleProject"
+  create_nat_gateway               = true
+  multi_subnet_nat_gateway_for_vpc = false
+  enable_vpc_flow_logs             = false
 }

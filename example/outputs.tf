@@ -3,16 +3,11 @@ output "vpc_id" {
 
 }
 
-output "network_public_subnet_id" {
-  value = module.network.public_subnet_id
-
+output "private_subnets_id" {
+  value = module.network.private_subnets_id
 }
 
-output "network_private_subnet_id" {
-  value = module.network.private_subnet_id
-
+output "public_subnets_id" {
+  value = module.network.public_subnets_id
 }
 
-output "rstring" {
-  value = module.network.rstring
-}

@@ -1,7 +1,7 @@
 variable "environment" {
   type        = string
   description = "the environment type which will be tagged the resource e.g. dev. uat, stagging, prod"
-  default     = "dev"
+  default     = "Development"
 }
 
 variable "owner" {
@@ -10,33 +10,39 @@ variable "owner" {
   default     = "resource_owner_buddy"
 }
 
+variable "project_name" {
+  default     = ""
+  type        = string
+  description = "Project name used"
+}
 
-variable "network_cidr" {
+variable "cidr_range" {
   type        = string
   description = "AWS network cidr"
 }
 
-
-variable "public_subnet_cidr" {
-  type        = string
-  description = "AWS public subnet cidr"
+variable "create_nat_gateway" {
+  default     = false
+  description = "if true then create nat gateway for private subnets"
 }
 
-variable "private_subnet_cidr" {
-  type        = string
-  description = "AWS private subnet cidr"
+variable "create_internet_gateway" {
+  default     = true
+  description = "if true then create Internet Gateway for public subnets"
 }
 
-
-variable "availability_zone_a" {
-  type        = string
-  default     = "us-east-1a"
-  description = "availability zone for subnet"
+variable "multi_subnet_nat_gateway_for_vpc" {
+  default     = false
+  description = "if false then is only one NAT gateway for each subnets, if true the each prvate subnets has allocated NAT Gateway for itself"
 }
 
-variable "availability_zone_b" {
-  type        = string
-  default     = "us-east-1b"
-  description = "availability zone for subnet"
+variable "enable_vpc_flow_logs" {
+  default     = false
+  description = "if true enables vpc flow logs to generate and deliver"
 
+}
+
+variable "log_delivery_type" {
+  default     = "cloud-watch-logs"
+  description = "type of VPC flow logs delivery type"
 }
