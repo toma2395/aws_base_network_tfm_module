@@ -1,6 +1,6 @@
 locals {
-
-  project_name_tag = var.project_name != "" ? ({ "Project" = "${var.project_name}" }) : {}
+  availability_zones = ["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c", ]
+  project_name_tag   = var.project_name != "" ? ({ "Project" = "${var.project_name}" }) : {}
 
   tags = merge({
     Terraform   = "true"
@@ -20,6 +20,11 @@ locals {
     cidrsubnet(var.cidr_range, 3, 6),
   ]
 
+  private_cidr_ranges_az_map = zipmap(local.private_cidr_ranges, local.availability_zones)
+  public_cidr_ranges_az_map  = zipmap(local.public_cidr_ranges, local.availability_zones)
+
+
+
   enable_nat_gateway           = var.create_nat_gateway ? true : false
   default_private_subnet_index = 0
 }
@@ -33,10 +38,11 @@ resource "aws_vpc" "core_vpc" {
 }
 
 resource "aws_subnet" "private_subnet" {
-  for_each = toset(local.private_cidr_ranges)
+  for_each = local.private_cidr_ranges_az_map
 
-  cidr_block = each.key
-  vpc_id     = aws_vpc.core_vpc.id
+  cidr_block        = each.key
+  availability_zone = each.value
+  vpc_id            = aws_vpc.core_vpc.id
 
   tags = merge(local.tags, {
     "name" = "private-subnet"
@@ -45,9 +51,10 @@ resource "aws_subnet" "private_subnet" {
 
 
 resource "aws_subnet" "public_subnet" {
-  for_each = toset(local.public_cidr_ranges)
+  for_each = local.public_cidr_ranges_az_map
 
   cidr_block              = each.key
+  availability_zone       = each.value
   vpc_id                  = aws_vpc.core_vpc.id
   map_public_ip_on_launch = true
   tags = merge(local.tags, {

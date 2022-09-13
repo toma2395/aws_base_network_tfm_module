@@ -3,12 +3,12 @@ provider "aws" {
 }
 
 locals {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 
 module "network" {
-  # source = "git@github.com:toma2395/aws_base_network_tfm_module.git//?ref=v0.2.0"
+  # source = "git@github.com:toma2395/aws_base_network_tfm_module.git//?ref=v1.0.0"
   source = "../" # local path
 
   environment                      = "production"
@@ -17,5 +17,5 @@ module "network" {
   project_name                     = "MySampleProject"
   create_nat_gateway               = true
   multi_subnet_nat_gateway_for_vpc = false
-  enable_vpc_flow_logs             = false
+  enable_vpc_flow_logs             = true
 }

@@ -1,3 +1,9 @@
+variable "aws_region" {
+  default     = "us-east-1"
+  description = "aws region for vpc deployment"
+
+}
+
 variable "environment" {
   type        = string
   description = "the environment type which will be tagged the resource e.g. dev. uat, stagging, prod"
