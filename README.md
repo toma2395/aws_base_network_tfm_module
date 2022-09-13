@@ -56,9 +56,9 @@ No Modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | yes |
-| cidr_range | AWS network cidr | `string` | "" | yes |
-| owner | the owner of resources created | `string` | no | no |
-| project_name | Project name used | `string` | no | no |
+| cidr_range | AWS network cidr | `string` |  | yes |
+| owner | the owner of resources created | `string` |  | no |
+| project_name | Project name used | `string` |  | no |
 | create_nat_gateway | Project name used | `boolean` |  `false` | no |
 | create_internet_gateway | Project name used | `boolean`` |  `false` | no |
 | multi_subnet_nat_gateway_for_vpc | Project name used | `boolean`|  `false` | no |
