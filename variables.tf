@@ -18,7 +18,7 @@ variable "owner" {
 
 variable "enable_dns_hostnames" {
   type        = bool
-  description = "Enables dns hostnames"
+  description = "Enables DNS hostnames in VPC"
   default     = false
 }
 
