@@ -109,8 +109,8 @@ resource "aws_eip" "multi_nat_eip" {
 }
 
 resource "aws_nat_gateway" "many_private_nat_gateways" {
-  count         = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? length([for s in aws_subnet.private_subnet : s.id]) : 0
-  subnet_id     = element([for s in aws_subnet.private_subnet : s.id], count.index)
+  count         = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? length([for s in aws_subnet.public_subnet : s.id]) : 0
+  subnet_id     = element([for s in aws_subnet.public_subnet : s.id], count.index)
   allocation_id = element([for s in aws_eip.multi_nat_eip : s.id], count.index)
 
   depends_on = [
