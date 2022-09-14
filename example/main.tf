@@ -8,7 +8,7 @@ locals {
 
 
 module "network" {
-  # source = "git@github.com:toma2395/aws_base_network_tfm_module.git//?ref=v1.0.0"
+  # source = "git@github.com:toma2395/aws_base_network_tfm_module.git//?ref=v1.0.1"
   source = "../" # local path
 
   environment                      = "production"
