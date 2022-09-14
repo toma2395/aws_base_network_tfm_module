@@ -55,15 +55,18 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| aws_region | AWS region for vpc deployment | `string` | `us-east-1` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | yes |
 | cidr_range | AWS network cidr | `string` |  | yes |
 | owner | the owner of resources created | `string` |  | no |
 | project_name | Project name used | `string` |  | no |
-| create_nat_gateway | Project name used | `boolean` |  `false` | no |
-| create_internet_gateway | Project name used | `boolean` |  `false` | no |
-| multi_subnet_nat_gateway_for_vpc | Project name used | `boolean`|  `false` | no |
-| enable_vpc_flow_logs | Project name used | `boolean` | `false` | no |
+| create_nat_gateway | Project name used | `bool` |  `false` | no |
+| create_internet_gateway | Project name used | `bool` |  `false` | no |
+| multi_subnet_nat_gateway_for_vpc | Project name used | `bool`|  `false` | no |
+| enable_vpc_flow_logs | Project name used | `bool` | `false` | no |
 | log_delivery_type | type of VPC flow logs delivery type -> one of ["cloud-watch-logs", "s3"]| `string` | `cloud-watch-logs` | no |
+| enable_dns_hostnames | Enables DNS hostnames in VPC | `bool` | `false` | no |
+
 
 
 ## Outputs
