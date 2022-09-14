@@ -29,13 +29,17 @@ locals {
   default_private_subnet_index = 0
 }
 
+################################################################################
+# VPC and SUBNETS
+################################################################################
 
 resource "aws_vpc" "core_vpc" {
   cidr_block           = var.cidr_range
   enable_dns_hostnames = var.enable_dns_hostnames
 
-  tags = local.tags
-
+  tags = merge(local.tags, {
+    Name = "core-vpc"
+  })
 }
 
 resource "aws_subnet" "private_subnet" {
@@ -46,7 +50,7 @@ resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.core_vpc.id
 
   tags = merge(local.tags, {
-    "name" = "private-subnet"
+    Name = "private-subnet"
   })
 }
 
@@ -59,17 +63,19 @@ resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.core_vpc.id
   map_public_ip_on_launch = true
   tags = merge(local.tags, {
-    "name" = "public-subnet"
+    Name = "public-subnet"
   })
 }
 
-
+################################################################################
+# PUBLIC ROUTE TABLE AND INTERNET GATEWAY
+################################################################################
 
 resource "aws_internet_gateway" "my_igw" {
   count  = var.create_internet_gateway ? 1 : 0
   vpc_id = aws_vpc.core_vpc.id
   tags = merge(local.tags, {
-    "name" = "default_vpc_IGW"
+    Name = "core-vpc-igw"
   })
 }
 resource "aws_route_table" "public_table" {
@@ -93,10 +99,19 @@ resource "aws_route_table_association" "route_table_association" {
   route_table_id = aws_route_table.public_table.id
 }
 
+################################################################################
+# NAT GATEWAY
+################################################################################
+
+resource "aws_eip" "multi_nat_eip" {
+  count = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? length([for s in aws_subnet.private_subnet : s.id]) : 0
+  vpc   = true
+}
 
 resource "aws_nat_gateway" "many_private_nat_gateways" {
-  for_each          = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? aws_subnet.public_subnet : {}
-  subnet_id         = each.value.id
+  count         = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? length([for s in aws_subnet.private_subnet : s.id]) : 0
+  subnet_id     = element([for s in aws_subnet.private_subnet : s.id], count.index)
+  allocation_id = element([for s in aws_eip.multi_nat_eip : s.id], count.index)
 
   depends_on = [
     aws_internet_gateway.my_igw
@@ -109,15 +124,18 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_nat_gateway" "one_private_nat_gateway" {
-  count             = local.enable_nat_gateway && !var.multi_subnet_nat_gateway_for_vpc ? 1 : 0
-  allocation_id     = aws_eip.nat_eip[0].id
-  subnet_id         = aws_subnet.public_subnet[local.public_cidr_ranges[local.default_private_subnet_index]].id
+  count         = local.enable_nat_gateway && !var.multi_subnet_nat_gateway_for_vpc ? 1 : 0
+  allocation_id = aws_eip.nat_eip[0].id
+  subnet_id     = aws_subnet.public_subnet[local.public_cidr_ranges[local.default_private_subnet_index]].id
 
   depends_on = [
     aws_internet_gateway.my_igw
   ]
 }
 
+################################################################################
+# PRIVATE ROUTE TABLE
+################################################################################
 
 resource "aws_route_table" "private_table" {
   count  = local.enable_nat_gateway && !var.multi_subnet_nat_gateway_for_vpc ? 1 : 0
@@ -140,28 +158,32 @@ resource "aws_route_table_association" "private_route_table_association" {
 
 
 resource "aws_route_table" "private_tables" {
-  for_each = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? aws_nat_gateway.many_private_nat_gateways : {}
-  vpc_id   = aws_vpc.core_vpc.id
+  count  = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? length([for k in aws_nat_gateway.many_private_nat_gateways : k.id]) : 0
+  vpc_id = aws_vpc.core_vpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = each.value.id
+    nat_gateway_id = element([for k in aws_nat_gateway.many_private_nat_gateways : k.id], count.index)
   }
-  tags = merge(local.tags, {})
+  tags = merge(local.tags, { Name = "core-vpc-private-route-table-${count.index}" })
 
 }
 
 resource "aws_route_table_association" "multi_private_route_table_association" {
-  for_each       = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? zipmap([for k in aws_route_table.private_tables : k.id], [for s in aws_subnet.private_subnet : s.id]) : {}
-  subnet_id      = each.value
-  route_table_id = each.key
+  count     = local.enable_nat_gateway && var.multi_subnet_nat_gateway_for_vpc ? length([for s in aws_subnet.private_subnet : s.id]) : 0
+  subnet_id = element([for s in aws_subnet.private_subnet : s.id], count.index)
+  route_table_id = element(
+    [for k in aws_route_table.private_tables : k.id], count.index
+  )
 
   depends_on = [
     aws_route_table.private_tables
   ]
 }
 
-#VPC flow logs
+################################################################################
+# VPC FLOW LOGS
+################################################################################
 
 resource "aws_flow_log" "vpc_flow_logs_enabled" {
   count                = var.enable_vpc_flow_logs ? 1 : 0
