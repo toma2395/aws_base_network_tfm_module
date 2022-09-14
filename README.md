@@ -78,5 +78,3 @@ No Modules.
 | public\_subnets\_ips | IPs for the public subnets in a list of tuple format |
 | private\_subnets\_id | Identifiers of private subnets in a list of tuple format |
 | public\_subnets\_id | Identifiers of public subnets in a list of tuple format |
-| bucket\_website\_domain | The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records. |
-| bucket\_website\_endpoint | The website endpoint, if the bucket is configured with a website. If not, this will be an empty string. |
