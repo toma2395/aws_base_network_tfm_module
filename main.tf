@@ -40,6 +40,9 @@ resource "aws_vpc" "core_vpc" {
   tags = merge(local.tags, {
     Name = "core-vpc"
   })
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_subnet" "private_subnet" {
@@ -52,6 +55,9 @@ resource "aws_subnet" "private_subnet" {
   tags = merge(local.tags, {
     Name = "private-subnet"
   })
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 
@@ -65,6 +71,10 @@ resource "aws_subnet" "public_subnet" {
   tags = merge(local.tags, {
     Name = "public-subnet"
   })
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 ################################################################################
